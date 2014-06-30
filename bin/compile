@@ -4,7 +4,7 @@
 #
 #     $ bin/compile <build-dir> <cache-dir> <env-path>
 
-# Build for nginx
+# Build for nginx starts
 set -e
 
 mkdir -p "$1/bin/"
@@ -26,6 +26,7 @@ else
   echo '-----> nginx-buildpack: Custom config found in app/config.'
 fi
 
+# Build for nginx ends
 
 # Fail fast and fail hard.
 set -eo pipefail
