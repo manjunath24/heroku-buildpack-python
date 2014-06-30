@@ -28,6 +28,8 @@ fi
 
 # Build for nginx ends
 
+exit 0
+
 # Fail fast and fail hard.
 set -eo pipefail
 
