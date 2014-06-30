@@ -4,6 +4,29 @@
 #
 #     $ bin/compile <build-dir> <cache-dir> <env-path>
 
+# Build for nginx
+set -e
+
+mkdir -p "$1/bin/"
+cp bin/nginx "$1/bin/"
+nginx_version=$(./bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
+echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
+cp bin/start-nginx "$1/bin/"
+echo '-----> nginx-buildpack: Added start-nginx to app/bin'
+
+mkdir -p "$1/config"
+
+cp config/mime.types "$1/config/"
+echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
+
+if [[ ! -f $1/config/nginx.conf.erb ]]; then
+  cp config/nginx.conf.erb "$1/config/"
+  echo '-----> nginx-buildpack: Default config copied to app/config.'
+else
+  echo '-----> nginx-buildpack: Custom config found in app/config.'
+fi
+
+
 # Fail fast and fail hard.
 set -eo pipefail
 
@@ -281,28 +304,6 @@ mv build/html/* ../../static_html/docs/django-graphos/
 cd $BUILD_DIR
 
 puts-step "Done continuing execution"
-
-# Build for nginx
-set -e
-
-mkdir -p "$1/bin/"
-cp bin/nginx "$1/bin/"
-nginx_version=$(./bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
-echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
-cp bin/start-nginx "$1/bin/"
-echo '-----> nginx-buildpack: Added start-nginx to app/bin'
-
-mkdir -p "$1/config"
-
-cp config/mime.types "$1/config/"
-echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
-
-if [[ ! -f $1/config/nginx.conf.erb ]]; then
-  cp config/nginx.conf.erb "$1/config/"
-  echo '-----> nginx-buildpack: Default config copied to app/config.'
-else
-  echo '-----> nginx-buildpack: Custom config found in app/config.'
-fi
 
 # Experimental post_compile hook.
 bpwatch start post_compile
