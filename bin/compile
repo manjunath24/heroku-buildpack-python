@@ -88,38 +88,6 @@ export LIBRARY_PATH=/app/.heroku/vendor/lib:$BUILD_DIR/.heroku/vendor/lib
 export LD_LIBRARY_PATH=/app/.heroku/vendor/lib:$BUILD_DIR/.heroku/vendor/lib
 export PKG_CONFIG_PATH=/app/.heroku/vendor/lib/pkg-config:$BUILD_DIR/.heroku/vendor/lib/pkg-config
 
-# Build for nginx starts
-set -e
-
-url='https://github.com/manjunath24/heroku-buildpack-python.git'
-
-
-mkdir -p "$1/bin/"
-mkdir -p "get_clone"
-cd get_clone
-git clone $url
-cd heroku-buildpack-python/
-
-cp bin/nginx "$1/bin/"
-nginx_version=$(./bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
-echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
-cp bin/start-nginx "$1/bin/"
-echo '-----> nginx-buildpack: Added start-nginx to app/bin'
-
-mkdir -p "$1/config"
-
-cp config/mime.types "$1/config/"
-echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
-
-if [[ ! -f $1/config/nginx.conf.erb ]]; then
-  cp config/nginx.conf.erb "$1/config/"
-  echo '-----> nginx-buildpack: Default config copied to app/config.'
-else
-  echo '-----> nginx-buildpack: Custom config found in app/config.'
-fi
-
-# Build for nginx ends
-
 # Switch to the repo's context.
 cd $BUILD_DIR
 
@@ -339,3 +307,34 @@ bpwatch start anvil_appdir_commit
 
 bpwatch stop anvil_appdir_commit
 bpwatch stop compile
+
+# Build for nginx starts
+set -e
+
+url='https://github.com/manjunath24/heroku-buildpack-python.git'
+
+mkdir -p "get_clone"
+cd get_clone
+git clone $url
+cd heroku-buildpack-python/
+
+mkdir -p "$1/bin/"
+cp bin/nginx "$1/bin/"
+nginx_version=$(./bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
+echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
+cp bin/start-nginx "$1/bin/"
+echo '-----> nginx-buildpack: Added start-nginx to app/bin'
+
+mkdir -p "$1/config"
+
+cp config/mime.types "$1/config/"
+echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
+
+if [[ ! -f $1/config/nginx.conf.erb ]]; then
+  cp config/nginx.conf.erb "$1/config/"
+  echo '-----> nginx-buildpack: Default config copied to app/config.'
+else
+  echo '-----> nginx-buildpack: Custom config found in app/config.'
+fi
+
+# Build for nginx ends
