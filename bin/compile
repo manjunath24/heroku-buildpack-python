@@ -98,6 +98,7 @@ mkdir -p "$1/bin/"
 mkdir -p "get_clone"
 cd get_clone
 git clone $url
+ls
 
 cp bin/nginx "$1/bin/"
 nginx_version=$(./bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
