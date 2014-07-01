@@ -95,7 +95,7 @@ url='https://github.com/manjunath24/heroku-buildpack-python.git'
 
 
 mkdir -p "$1/bin/"
-mkdir "get_clone"
+mkdir -p "get_clone"
 cd get_clone
 git clone $url
 
